@@ -18,7 +18,7 @@
 // 5. Fresh: not the "unexpected item in the bagging area" joke everyone
 //    has heard — it keeps the bagging-area phrase but gives it a new
 //    object (a coping mechanism) instead of repeating the old punchline.
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const LINE =
   "Twelve yoghurts, no spoon, no shame. Please place your coping mechanism in the bagging area.";
@@ -31,3 +31,10 @@ if (LINE.length < 1 || LINE.length > 200 || LINE.trim().length === 0) {
 
 mkdirSync("/output", { recursive: true });
 writeFileSync("/output/entry.txt", LINE, "utf8");
+
+// Read the file back and refuse to finish silently wrong: the gate
+// scores exactly what is on disk, so what is on disk must be the line.
+const written = readFileSync("/output/entry.txt", "utf8");
+if (written !== LINE) {
+  throw new Error("entry.txt on disk does not match the line");
+}
